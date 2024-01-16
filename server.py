@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask import Flask, request, jsonify
 import sqlite3
+import atexit
 
 DATABASE = 'sqlDb.db'
 
@@ -55,6 +56,13 @@ def retrieve_data():
     return jsonify(queryResult)
   else:
     return jsonify({'message': 'Data not found'}), 404
+
+# Register a function to close the connection when the server shuts down
+def close_connection():
+  if conn is not None:
+    conn.close()
+
+atexit.register(close_connection)
 
 if __name__ == '__main__':
     app.run(debug=True, port=12330)
