@@ -46,7 +46,7 @@ def insert_portfolio_value():
         try:
             date = datetime.strptime(date_str, '%Y-%m-%d').date()
         except ValueError:
-            return jsonify({'error': 'Invalid date format'}), 400
+            return jsonify({'error': 'Invalid date format, "YYYY-MM-DD" is required'}), 400
 
         # Insert data into the table using parameterized query
         db = get_db()
@@ -58,7 +58,7 @@ def insert_portfolio_value():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/getPortfolioValue', methods=['GET'])
+@app.route('/getPortfolioValueByDate', methods=['GET'])
 def get_portfolio_value():
     try:
         data = request.get_json()
@@ -73,7 +73,7 @@ def get_portfolio_value():
         try:
             date = datetime.strptime(date_str, '%Y-%m-%d').date()
         except ValueError:
-            return jsonify({'error': 'Invalid date format, "YYYY-MM-DD" is required.'}), 400
+            return jsonify({'error': f'Invalid date format, received "{date_str}" but "YYYY-MM-DD" is required.'}), 400
 
         # Retrieve data from the table using parameterized query
         db = get_db()
@@ -90,10 +90,10 @@ def get_portfolio_value():
             }
             return jsonify(query_result)
         else:
-            return jsonify({'message': 'Data not found'}), 404
+            return jsonify({'message': f'Data for portfolio "{portfolio_id}" for data "{date}" not found'}), 404
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-  app.run(debug=True, port=12330)
+    app.run(debug=True, port=12330)
