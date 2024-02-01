@@ -26,6 +26,7 @@ def create_tables():
           CREATE TABLE IF NOT EXISTS transactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             portfolio_id TEXT,
+            entity_type TEXT,
             txn_type TEXT,
             qty FLOAT,
             price FLOAT,
@@ -46,9 +47,18 @@ create_tables()
 def add_transaction():
     try:
         data = request.get_json()
-        required_fields = ["portfolio_id", "txn_type", "qty", "price", "date", "ticker"]
-        if not all(field in data for field in required_fields):
-            return jsonify({"error": "Missing required fields"}), 400
+        required_fields = [
+            "portfolio_id",
+            "txn_type",
+            "qty",
+            "price",
+            "date",
+            "ticker",
+            "entity_type",
+        ]
+        for field in required_fields:
+            if field not in data:
+                return jsonify({"error": f'Missing "{field}" in the input data'}), 400
 
         portfolio_id = data["portfolio_id"]
         txn_type = data["txn_type"]
@@ -56,6 +66,7 @@ def add_transaction():
         price = data["price"]
         date_str = data["date"]
         ticker = data["ticker"]
+        entity_type = data["entity_type"]
         notes = data["notes"] if "notes" in data else ""
         metadata = {"notes": notes}
 
@@ -71,7 +82,7 @@ def add_transaction():
         # Insert data into the table using parameterized query
         db = get_db()
         db.execute(
-            "INSERT INTO transactions (portfolio_id, txn_type, qty, price, date, ticker, metadata) VALUES (?,?,?,?,?,?,?)",
+            "INSERT INTO transactions (portfolio_id, txn_type, qty, price, date, ticker, entity_type, metadata ) VALUES (?,?,?,?,?,?,?,?)",
             (
                 portfolio_id,
                 txn_type,
@@ -79,6 +90,7 @@ def add_transaction():
                 price,
                 date_str,
                 ticker,
+                entity_type,
                 json.dumps(metadata),
             ),
         )
