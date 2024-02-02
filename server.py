@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, g
 import sqlite3
 
 DATABASE = "sqlDb.db"
+OPTION_ENTITY_TYPE_STRING = "option"
 
 app = Flask(__name__)
 app.config["DATABASE"] = DATABASE
@@ -75,7 +76,43 @@ def add_transaction():
         ticker = data["ticker"]
         entity_type = data["entity_type"]
         notes = data["notes"] if "notes" in data else ""
-        metadata = {"notes": notes}
+        strike = 0
+        expiry_date_str = "2023-01-01"
+        option_type = ""
+        if entity_type == OPTION_ENTITY_TYPE_STRING:
+            required_option_fields = [
+                ("strike", float),
+                ("expiry_date", str),
+                ("option_type", str),
+            ]
+            for field, field_type in required_option_fields:
+                if field not in data:
+                    return (
+                        jsonify(
+                            {
+                                "error": f'Missing "{field}" in the input data for options transaction'
+                            }
+                        ),
+                        400,
+                    )
+                if not isinstance(data[field], field_type):
+                    return (
+                        jsonify(
+                            {
+                                "error": f'Field "{field}" should be of type "{field_type}"'
+                            }
+                        ),
+                        400,
+                    )
+            strike = data["strike"]
+            expiry_date_str = data["expiry_date"]
+            option_type = data["option_type"]
+        metadata = {
+            "notes": notes,
+            "strike": strike,
+            "expiry_date": expiry_date_str,
+            "option_type": option_type,
+        }
 
         # Validate date format
         try:
