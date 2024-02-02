@@ -48,17 +48,24 @@ def add_transaction():
     try:
         data = request.get_json()
         required_fields = [
-            "portfolio_id",
-            "txn_type",
-            "qty",
-            "price",
-            "date",
-            "ticker",
-            "entity_type",
+            ("portfolio_id", str),
+            ("txn_type", str),
+            ("qty", (int, float)),
+            ("price", float),
+            ("date", str),
+            ("ticker", str),
+            ("entity_type", str),
         ]
-        for field in required_fields:
+        for field, field_type in required_fields:
             if field not in data:
                 return jsonify({"error": f'Missing "{field}" in the input data'}), 400
+            if not isinstance(data[field], field_type):
+                return (
+                    jsonify(
+                        {"error": f'Field "{field}" should be of type "{field_type}"'}
+                    ),
+                    400,
+                )
 
         portfolio_id = data["portfolio_id"]
         txn_type = data["txn_type"]
