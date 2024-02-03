@@ -79,13 +79,13 @@ CREATE_SNAPSHOT_TABLE_QUERY = """
           )
         """
 
-ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
+ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
     ("snapshot_date", str),
     ("portfolio_value", float),
 ]
 
-ADD_TRANSACTION_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
+ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
     ("entity_type", str),
     ("ticker", str),
     ("value", float),
@@ -102,3 +102,9 @@ ADD_SNAPSHOT_QUERY = """
         assets
     ) VALUES (?, ?, ?, ?)
 """
+
+ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
+    ("portfolio_id", str),
+    ("snapshot_date", str),
+    ("portfolio_value", float),
+]

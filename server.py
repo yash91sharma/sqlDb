@@ -6,6 +6,7 @@ from src.get_transactions_by_portfolio_date import get_transactions_by_portfolio
 from src.utils import DATABASE_FILE_NAME
 from src.create_tables import create_transaction_table, create_snapshot_table
 from src.add_snapshot import add_snapshot
+from src.get_snapshot_by_portfolio import get_snapshot_by_portfolio
 
 app = Flask(__name__)
 app.config["DATABASE"] = DATABASE_FILE_NAME
@@ -36,6 +37,10 @@ def get_transaction_by_portfolio_date_route():
 @app.route("/addSnapshot", methods=["POST"])
 def add_snapshot_route():
     return add_snapshot(request, get_db())
+
+@app.route("/getSnapshotByPortfolio", methods=["GET"])
+def get_snapshot_by_portfolio_route():
+    return get_snapshot_by_portfolio(request, get_db())
 
 
 if __name__ == "__main__":

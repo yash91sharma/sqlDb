@@ -2,8 +2,8 @@ from datetime import datetime
 from flask import jsonify
 import json
 from src.utils import (
-    ADD_TRANSACTION_REQUIRED_ASSETS_FIELDS_AND_TYPES,
-    ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES,
+    ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES,
+    ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES,
     generate_missing_field_api_error,
     generate_missing_field_type_api_error,
     DEFAULT_DATE_STR,
@@ -14,7 +14,7 @@ from src.utils import (
 def add_snapshot(request, db):
     try:
         data = request.get_json()
-        for field_name, field_type in ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES:
+        for field_name, field_type in ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES:
             if field_name not in data:
                 return generate_missing_field_api_error(field_name)
             if not isinstance(data[field_name], field_type):
@@ -36,7 +36,7 @@ def add_snapshot(request, db):
             for (
                 field_name,
                 field_type,
-            ) in ADD_TRANSACTION_REQUIRED_ASSETS_FIELDS_AND_TYPES:
+            ) in ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES:
                 if field_name not in asset:
                     return generate_missing_field_api_error(field_name)
                 if not isinstance(asset[field_name], field_type):
