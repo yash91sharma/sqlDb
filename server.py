@@ -34,9 +34,11 @@ def add_transaction_route():
 def get_transaction_by_portfolio_date_route():
     return get_transactions_by_portfolio_date(request, get_db())
 
+
 @app.route("/addSnapshot", methods=["POST"])
 def add_snapshot_route():
     return add_snapshot(request, get_db())
+
 
 @app.route("/getSnapshotByPortfolio", methods=["GET"])
 def get_snapshot_by_portfolio_route():
