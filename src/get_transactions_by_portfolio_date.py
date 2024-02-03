@@ -1,10 +1,10 @@
-from datetime import datetime
 from flask import jsonify, make_response
 from src.utils import (
     GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE,
     generate_missing_field_type_api_error,
     GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY,
     validate_fields,
+    convert_str_to_date,
 )
 
 
@@ -21,9 +21,8 @@ def get_transactions_by_portfolio_date(request, db):
         date_str = data["date"]
 
         # Validate date format
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        except ValueError:
+        date = convert_str_to_date(date_str)
+        if date is None:
             return generate_missing_field_type_api_error("date", "YYYY-MM-DD")
 
         # Retrieve data from the table using parameterized query

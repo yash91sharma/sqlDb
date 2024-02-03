@@ -1,4 +1,5 @@
 from flask import jsonify
+from datetime import datetime
 
 DATABASE_FILE_NAME = "sqlDb.db"
 OPTION_ENTITY_TYPE_STRING = "option"
@@ -121,3 +122,10 @@ def validate_fields(data, field_with_types):
         if not isinstance(data[field_name], field_type):
             return generate_missing_field_type_api_error(field_name, field_type)
     return None
+
+
+def convert_str_to_date(date_str):
+    try:
+        return datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return None

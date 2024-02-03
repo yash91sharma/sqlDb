@@ -9,6 +9,7 @@ from src.utils import (
     ADD_TRANSACTION_QUERY,
     generate_missing_field_type_api_error,
     validate_fields,
+    convert_str_to_date,
 )
 
 
@@ -43,9 +44,8 @@ def add_transaction(request, db):
         expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
 
         # Validate date format
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        except ValueError:
+        date = convert_str_to_date(date_str)
+        if date is None:
             return generate_missing_field_type_api_error("date", "YYYY-MM-DD")
 
         # option transaction field check
@@ -59,9 +59,8 @@ def add_transaction(request, db):
             expiry_date_str = data["expiry_date"]
             option_type = data["option_type"]
             # Validate expiry date format
-            try:
-                expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
-            except ValueError:
+            expiry_date = convert_str_to_date(expiry_date_str)
+            if expiry_date is None:
                 return generate_missing_field_type_api_error(
                     "expiry_date", "YYYY-MM-DD"
                 )

@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import jsonify, make_response
 from src.utils import (
     GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES,
@@ -6,6 +5,7 @@ from src.utils import (
     GET_SNAPSHOT_BY_PORTFOLIO_QUERY,
     GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY,
     validate_fields,
+    convert_str_to_date,
 )
 
 
@@ -21,11 +21,8 @@ def get_snapshot_by_portfolio(request, db):
         snapshot_date = None
 
         if "snapshot_date" in data:
-            try:
-                snapshot_date = datetime.strptime(
-                    data["snapshot_date"], "%Y-%m-%d"
-                ).date()
-            except ValueError:
+            snapshot_date = convert_str_to_date(data["snapshot_date"])
+            if snapshot_date is None:
                 return generate_missing_field_type_api_error(
                     "snapshot_date", "YYYY-MM-DD"
                 )
