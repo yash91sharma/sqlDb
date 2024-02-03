@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import jsonify
+from flask import jsonify, make_response
 from src.utils import (
     GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE,
     generate_missing_field_type_api_error,
@@ -10,7 +10,7 @@ from src.utils import (
 
 def get_transactions_by_portfolio_date(request, db):
     try:
-        data = request.get_json()
+        data = request.json
         fields_validation_error = validate_fields(
             data, GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE
         )
@@ -27,21 +27,22 @@ def get_transactions_by_portfolio_date(request, db):
             return generate_missing_field_type_api_error("date", "YYYY-MM-DD")
 
         # Retrieve data from the table using parameterized query
-        cursor = db.cursor()
-        cursor.execute(
-            GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY,
-            (portfolio_id, date),
-        )
-        rows = cursor.fetchall()
+        with db:
+            cursor = db.cursor()
+            cursor.execute(
+                GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY,
+                (portfolio_id, date),
+            )
+            rows = cursor.fetchall()
 
         if rows:
             columns = [desc[0] for desc in cursor.description]
             result = [
                 {"columns": columns, "data": [dict(zip(columns, row)) for row in rows]}
             ]
-            return jsonify(result)
+            return make_response(jsonify(result), 200)
         else:
-            return (
+            return make_response(
                 jsonify(
                     {
                         "message": f'Data for portfolio "{portfolio_id}" for data "{date}" not found'

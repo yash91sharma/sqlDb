@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import jsonify
+from flask import jsonify, make_response
 from src.utils import (
     GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES,
     generate_missing_field_type_api_error,
@@ -11,7 +11,7 @@ from src.utils import (
 
 def get_snapshot_by_portfolio(request, db):
     try:
-        data = request.get_json()
+        data = request.json
         field_validation_error = validate_fields(
             data, GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES
         )
@@ -30,24 +30,25 @@ def get_snapshot_by_portfolio(request, db):
                     "snapshot_date", "YYYY-MM-DD"
                 )
 
-        cursor = db.cursor()
-        row = None
-        if snapshot_date is not None:
-            cursor.execute(
-                GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY,
-                (portfolio_id, snapshot_date),
-            )
-        else:
-            cursor.execute(
-                GET_SNAPSHOT_BY_PORTFOLIO_QUERY,
-                (portfolio_id,),
-            )
-        row = cursor.fetchone()
+        with db:
+            cursor = db.cursor()
+            row = None
+            if snapshot_date is not None:
+                cursor.execute(
+                    GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY,
+                    (portfolio_id, snapshot_date),
+                )
+            else:
+                cursor.execute(
+                    GET_SNAPSHOT_BY_PORTFOLIO_QUERY,
+                    (portfolio_id,),
+                )
+            row = cursor.fetchone()
 
         if row:
-            return jsonify({"data": dict(row)})
+            return make_response(jsonify({"data": dict(row)}), 200)
         else:
-            return (
+            return make_response(
                 jsonify(
                     {
                         "message": f'Oops, snapshot for portfolio "{portfolio_id}" not found'

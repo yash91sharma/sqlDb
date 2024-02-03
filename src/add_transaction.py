@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import jsonify
+from flask import jsonify, make_response
 import json
 from src.utils import (
     OPTION_ENTITY_TYPE_STRING,
@@ -15,7 +15,7 @@ from src.utils import (
 # TODO: merge entity and option_type. option and call -> option-call
 def add_transaction(request, db):
     try:
-        data = request.get_json()
+        data = request.json
 
         # general transaction field checks
         fields_validation_error = validate_fields(
@@ -84,7 +84,9 @@ def add_transaction(request, db):
             ),
         )
         db.commit()
-        return jsonify({"message": "Transaction inserted successfully"}), 201
+        return make_response(
+            jsonify({"message": "Transaction inserted successfully"}), 201
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

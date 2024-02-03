@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import jsonify
+from flask import jsonify, make_response
 import json
 from src.utils import (
     ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES,
@@ -14,7 +14,7 @@ from src.utils import (
 
 def add_snapshot(request, db):
     try:
-        data = request.get_json()
+        data = request.json
         fields_validation_error = validate_fields(
             data, ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES
         )
@@ -67,6 +67,8 @@ def add_snapshot(request, db):
             ),
         )
         db.commit()
-        return jsonify({"message": "Snapshot inserted successfully"}), 201
+        return make_response(
+            jsonify({"message": "Snapshot inserted successfully"}), 201
+        )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
