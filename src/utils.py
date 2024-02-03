@@ -68,3 +68,20 @@ CREATE_TRANSACTION_TABLE_QUERY = """
             metadata JSON
           )
         """
+
+CREATE_SNAPSHOT_TABLE_QUERY = """
+          CREATE TABLE IF NOT EXISTS snapshots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            portfolio_id TEXT,
+            entity_type TEXT,
+            ticker TEXT,
+            qty FLOAT,
+            value FLOAT,
+            cost_basis FLOAT,
+            option_type TEXT,
+            expiry_date DATE,
+            snapshot_date DATE,
+            strike FLOAT,
+            metadata JSON
+          )
+        """

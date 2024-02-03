@@ -4,7 +4,7 @@ import sqlite3
 from src.add_transaction import add_transaction
 from src.get_transactions_by_portfolio_date import get_transactions_by_portfolio_date
 from src.utils import DATABASE_FILE_NAME
-from src.create_tables import create_transaction_table
+from src.create_tables import create_transaction_table, create_snapshot_table
 
 app = Flask(__name__)
 app.config["DATABASE"] = DATABASE_FILE_NAME
@@ -19,6 +19,7 @@ def get_db():
 
 with app.app_context():
     create_transaction_table(app, get_db())
+    create_snapshot_table(app, get_db())
 
 
 # Used to add any transaction to the DB
