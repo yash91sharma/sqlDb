@@ -13,7 +13,6 @@ from src.utils import (
 )
 
 
-# TODO: merge entity and option_type. option and call -> option-call
 def add_transaction(request, db):
     try:
         data = request.json
@@ -57,7 +56,6 @@ def add_transaction(request, db):
                 return option_fields_validation_error
             strike = data["strike"]
             expiry_date_str = data["expiry_date"]
-            option_type = data["option_type"]
             # Validate expiry date format
             expiry_date = convert_str_to_date(expiry_date_str)
             if expiry_date is None:
@@ -76,7 +74,6 @@ def add_transaction(request, db):
                 date,
                 ticker,
                 entity_type,
-                option_type,
                 expiry_date,
                 strike,
                 json.dumps(metadata),

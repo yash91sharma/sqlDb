@@ -15,7 +15,6 @@ ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
 ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES = [
     ("strike", float),
     ("expiry_date", str),
-    ("option_type", str),
 ]
 DEFAULT_DATE_STR = "2021-11-23"
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE = [
@@ -42,11 +41,10 @@ ADD_TRANSACTION_QUERY = """
         qty, price,
         date, ticker,
         entity_type,
-        option_type,
         expiry_date,
         strike,
         metadata
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = (
@@ -63,7 +61,6 @@ CREATE_TRANSACTION_TABLE_QUERY = """
             price FLOAT,
             date DATE,
             ticker TEXT,
-            option_type TEXT,
             expiry_date DATE,
             strike FLOAT,
             metadata JSON
