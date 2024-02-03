@@ -81,7 +81,18 @@ CREATE_SNAPSHOT_TABLE_QUERY = """
             option_type TEXT,
             expiry_date DATE,
             snapshot_date DATE,
-            strike FLOAT,
-            metadata JSON
+            strike FLOAT
           )
         """
+
+ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
+    ("portfolio_id", str),
+    ("entity_type", str),
+    ("ticker", str),
+    ("qty", (int, float)),
+    ("value", float),
+    ("cost_basis",float),
+    ("snapshot_date", str),
+    
+    
+]
