@@ -2,23 +2,20 @@ from datetime import datetime
 from flask import jsonify
 from src.utils import (
     GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE,
-    generate_missing_field_api_error,
     generate_missing_field_type_api_error,
     GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY,
+    validate_fields,
 )
 
 
 def get_transactions_by_portfolio_date(request, db):
     try:
         data = request.get_json()
-        for (
-            field_name,
-            field_type,
-        ) in GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE:
-            if field_name not in data:
-                return generate_missing_field_api_error(field_name)
-            if not isinstance(data[field_name], field_type):
-                return generate_missing_field_type_api_error(field_name, field_type)
+        fields_validation_error = validate_fields(
+            data, GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE
+        )
+        if fields_validation_error:
+            return fields_validation_error
 
         portfolio_id = data["portfolio_id"]
         date_str = data["date"]

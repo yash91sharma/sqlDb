@@ -107,8 +107,17 @@ GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
 ]
 
-GET_SNAPSHOT_BY_PORTFOLIO_QUERY = "SELECT * FROM snapshots WHERE portfolio_id = ? ORDER BY snapshot_date DESC LIMIT 1"
-
-GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY = (
-    "SELECT * FROM snapshots WHERE portfolio_id = ? and snapshot_date = ? ORDER BY snapshot_date DESC LIMIT 1"
+GET_SNAPSHOT_BY_PORTFOLIO_QUERY = (
+    "SELECT * FROM snapshots WHERE portfolio_id = ? ORDER BY snapshot_date DESC LIMIT 1"
 )
+
+GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY = "SELECT * FROM snapshots WHERE portfolio_id = ? and snapshot_date = ? ORDER BY snapshot_date DESC LIMIT 1"
+
+
+def validate_fields(data, field_with_types):
+    for field_name, field_type in field_with_types:
+        if field_name not in data:
+            return generate_missing_field_api_error(field_name)
+        if not isinstance(data[field_name], field_type):
+            return generate_missing_field_type_api_error(field_name, field_type)
+    return None

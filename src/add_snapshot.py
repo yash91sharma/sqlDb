@@ -8,17 +8,18 @@ from src.utils import (
     generate_missing_field_type_api_error,
     DEFAULT_DATE_STR,
     ADD_SNAPSHOT_QUERY,
+    validate_fields,
 )
 
 
 def add_snapshot(request, db):
     try:
         data = request.get_json()
-        for field_name, field_type in ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES:
-            if field_name not in data:
-                return generate_missing_field_api_error(field_name)
-            if not isinstance(data[field_name], field_type):
-                return generate_missing_field_type_api_error(field_name, field_type)
+        fields_validation_error = validate_fields(
+            data, ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES
+        )
+        if fields_validation_error:
+            return fields_validation_error
         portfolio_id = data["portfolio_id"]
         snapshot_date_str = data["snapshot_date"]
         snapshot_date = DEFAULT_DATE_STR
@@ -33,14 +34,11 @@ def add_snapshot(request, db):
 
         assets = []
         for asset in data["assets"]:
-            for (
-                field_name,
-                field_type,
-            ) in ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES:
-                if field_name not in asset:
-                    return generate_missing_field_api_error(field_name)
-                if not isinstance(asset[field_name], field_type):
-                    return generate_missing_field_type_api_error(field_name, field_type)
+            asset_fields_validation_error = validate_fields(
+                asset, ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES
+            )
+            if asset_fields_validation_error:
+                return asset_fields_validation_error
             expiry_date_str = asset["expiry_date"]
             expiry_date = DEFAULT_DATE_STR
             try:

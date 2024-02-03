@@ -2,25 +2,21 @@ from datetime import datetime
 from flask import jsonify
 from src.utils import (
     GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES,
-    generate_missing_field_api_error,
     generate_missing_field_type_api_error,
     GET_SNAPSHOT_BY_PORTFOLIO_QUERY,
     GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY,
+    validate_fields,
 )
 
 
 def get_snapshot_by_portfolio(request, db):
     try:
         data = request.get_json()
-
-        for (
-            field_name,
-            field_type,
-        ) in GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES:
-            if field_name not in data:
-                return generate_missing_field_api_error(field_name)
-            if not isinstance(data[field_name], field_type):
-                return generate_missing_field_type_api_error(field_name, field_type)
+        field_validation_error = validate_fields(
+            data, GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES
+        )
+        if field_validation_error:
+            return field_validation_error
         portfolio_id = data["portfolio_id"]
         snapshot_date = None
 
@@ -49,7 +45,7 @@ def get_snapshot_by_portfolio(request, db):
         row = cursor.fetchone()
 
         if row:
-            return jsonify({"data":dict(row)})
+            return jsonify({"data": dict(row)})
         else:
             return (
                 jsonify(

@@ -7,8 +7,8 @@ from src.utils import (
     ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES,
     DEFAULT_DATE_STR,
     ADD_TRANSACTION_QUERY,
-    generate_missing_field_api_error,
     generate_missing_field_type_api_error,
+    validate_fields,
 )
 
 
@@ -18,11 +18,11 @@ def add_transaction(request, db):
         data = request.get_json()
 
         # general transaction field checks
-        for field, field_type in ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES:
-            if field not in data:
-                return generate_missing_field_api_error(field)
-            if not isinstance(data[field], field_type):
-                return generate_missing_field_type_api_error(field, field_type)
+        fields_validation_error = validate_fields(
+            data, ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES
+        )
+        if fields_validation_error:
+            return fields_validation_error
 
         portfolio_id = data["portfolio_id"]
         txn_type = data["txn_type"]
@@ -50,11 +50,11 @@ def add_transaction(request, db):
 
         # option transaction field check
         if entity_type == OPTION_ENTITY_TYPE_STRING:
-            for field, field_type in ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES:
-                if field not in data:
-                    return generate_missing_field_api_error(field)
-                if not isinstance(data[field], field_type):
-                    return generate_missing_field_type_api_error(field, field_type)
+            option_fields_validation_error = validate_fields(
+                data, ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES
+            )
+            if option_fields_validation_error:
+                return option_fields_validation_error
             strike = data["strike"]
             expiry_date_str = data["expiry_date"]
             option_type = data["option_type"]
