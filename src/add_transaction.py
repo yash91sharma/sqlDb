@@ -11,6 +11,7 @@ from src.utils import (
     generate_missing_field_type_api_error,
 )
 
+
 # TODO: merge entity and option_type. option and call -> option-call
 def add_transaction(request, db):
     try:
@@ -83,7 +84,7 @@ def add_transaction(request, db):
             ),
         )
         db.commit()
-        return jsonify({"message": "Data inserted successfully"}), 201
+        return jsonify({"message": "Transaction inserted successfully"}), 201
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

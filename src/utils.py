@@ -73,26 +73,32 @@ CREATE_SNAPSHOT_TABLE_QUERY = """
           CREATE TABLE IF NOT EXISTS snapshots (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             portfolio_id TEXT,
-            entity_type TEXT,
-            ticker TEXT,
-            qty FLOAT,
-            value FLOAT,
-            cost_basis FLOAT,
-            option_type TEXT,
-            expiry_date DATE,
             snapshot_date DATE,
-            strike FLOAT
+            portfolio_value FLOAT,
+            assets JSON
           )
         """
 
 ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
+    ("snapshot_date", str),
+    ("portfolio_value", float),
+]
+
+ADD_TRANSACTION_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
     ("entity_type", str),
     ("ticker", str),
-    ("qty", (int, float)),
     ("value", float),
-    ("cost_basis",float),
-    ("snapshot_date", str),
-    
-    
+    ("qty", float),
+    ("cost_basis", float),
+    ("expiry_date", str),
 ]
+
+ADD_SNAPSHOT_QUERY = """
+    INSERT INTO snapshots (
+        portfolio_id,
+        snapshot_date,
+        portfolio_value,
+        assets
+    ) VALUES (?, ?, ?, ?)
+"""
