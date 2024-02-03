@@ -3,8 +3,8 @@ from flask import jsonify
 import json
 from src.utils import (
     OPTION_ENTITY_TYPE_STRING,
-    REQUIRED_FIELDS_AND_TYPES,
-    REQUIRED_OPTION_FIELDS_AND_TYPES,
+    ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES,
+    ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES,
     DEFAULT_DATE_STR,
     ADD_TRANSACTION_QUERY,
     generate_missing_field_api_error,
@@ -17,7 +17,7 @@ def add_transaction(request, db):
         data = request.get_json()
 
         # general transaction field checks
-        for field, field_type in REQUIRED_FIELDS_AND_TYPES:
+        for field, field_type in ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES:
             if field not in data:
                 return generate_missing_field_api_error(field)
             if not isinstance(data[field], field_type):
@@ -49,7 +49,7 @@ def add_transaction(request, db):
 
         # option transaction field check
         if entity_type == OPTION_ENTITY_TYPE_STRING:
-            for field, field_type in REQUIRED_OPTION_FIELDS_AND_TYPES:
+            for field, field_type in ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES:
                 if field not in data:
                     return generate_missing_field_api_error(field)
                 if not isinstance(data[field], field_type):

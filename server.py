@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Flask, request, jsonify, g
 import sqlite3
 from src.add_transaction import add_transaction
+from src.get_transactions_by_portfolio_date import get_transactions_by_portfolio_date
 from src.utils import DATABASE_FILE_NAME
 
 app = Flask(__name__)
@@ -51,56 +52,8 @@ def add_transaction_route():
 
 
 @app.route("/getTransactionsByPortfolioDate", methods=["GET"])
-def get_transaction_by_portfolio_date():
-    try:
-        data = request.get_json()
-        required_fields = ["portfolio_id", "date"]
-        if not all(field in data for field in required_fields):
-            return jsonify({"error": "Missing required fields"}), 400
-
-        portfolio_id = data["portfolio_id"]
-        date_str = data["date"]
-
-        # Validate date format
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        except ValueError:
-            return (
-                jsonify(
-                    {
-                        "error": f'Invalid date format, received "{date_str}" but "YYYY-MM-DD" is required.'
-                    }
-                ),
-                400,
-            )
-
-        # Retrieve data from the table using parameterized query
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute(
-            "SELECT * FROM transactions WHERE portfolio_id = ? AND date = ?",
-            (portfolio_id, date),
-        )
-        rows = cursor.fetchall()
-
-        if rows:
-            columns = [desc[0] for desc in cursor.description]
-            result = [
-                {"columns": columns, "data": [dict(zip(columns, row)) for row in rows]}
-            ]
-            return jsonify(result)
-        else:
-            return (
-                jsonify(
-                    {
-                        "message": f'Data for portfolio "{portfolio_id}" for data "{date}" not found'
-                    }
-                ),
-                404,
-            )
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+def get_transaction_by_portfolio_date_route():
+    return get_transactions_by_portfolio_date(request, get_db())
 
 
 if __name__ == "__main__":

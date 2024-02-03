@@ -2,7 +2,7 @@ from flask import jsonify
 
 DATABASE_FILE_NAME = "sqlDb.db"
 OPTION_ENTITY_TYPE_STRING = "option"
-REQUIRED_FIELDS_AND_TYPES = [
+ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
     ("txn_type", str),
     ("qty", (int, float)),
@@ -11,12 +11,16 @@ REQUIRED_FIELDS_AND_TYPES = [
     ("ticker", str),
     ("entity_type", str),
 ]
-REQUIRED_OPTION_FIELDS_AND_TYPES = [
+ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES = [
     ("strike", float),
     ("expiry_date", str),
     ("option_type", str),
 ]
 DEFAULT_DATE_STR = "2021-11-23"
+GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE = [
+    ("portfolio_id", str),
+    ("date", str),
+]
 
 
 def generate_missing_field_api_error(field_name):
@@ -43,3 +47,7 @@ ADD_TRANSACTION_QUERY = """
         metadata
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
+
+GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = (
+    "SELECT * FROM transactions WHERE portfolio_id = ? AND date = ?"
+)
