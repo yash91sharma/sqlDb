@@ -51,3 +51,20 @@ ADD_TRANSACTION_QUERY = """
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = (
     "SELECT * FROM transactions WHERE portfolio_id = ? AND date = ?"
 )
+
+CREATE_TRANSACTION_TABLE_QUERY = """
+          CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            portfolio_id TEXT,
+            entity_type TEXT,
+            txn_type TEXT,
+            qty FLOAT,
+            price FLOAT,
+            date DATE,
+            ticker TEXT,
+            option_type TEXT,
+            expiry_date DATE,
+            strike FLOAT,
+            metadata JSON
+          )
+        """

@@ -4,6 +4,7 @@ import sqlite3
 from src.add_transaction import add_transaction
 from src.get_transactions_by_portfolio_date import get_transactions_by_portfolio_date
 from src.utils import DATABASE_FILE_NAME
+from src.create_tables import create_transaction_table
 
 app = Flask(__name__)
 app.config["DATABASE"] = DATABASE_FILE_NAME
@@ -16,33 +17,8 @@ def get_db():
     return g.db
 
 
-# Function to create the database table
-def create_tables():
-    with app.app_context():
-        db = get_db()
-        cursor = db.cursor()
-        cursor.execute(
-            """
-          CREATE TABLE IF NOT EXISTS transactions (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            portfolio_id TEXT,
-            entity_type TEXT,
-            txn_type TEXT,
-            qty FLOAT,
-            price FLOAT,
-            date DATE,
-            ticker TEXT,
-            option_type TEXT,
-            expiry_date DATE,
-            strike FLOAT,
-            metadata JSON
-          )
-        """
-        )
-        db.commit()
-
-
-create_tables()
+with app.app_context():
+    create_transaction_table(app, get_db())
 
 
 # Used to add any transaction to the DB
