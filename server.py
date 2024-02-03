@@ -33,6 +33,9 @@ def create_tables():
             price FLOAT,
             date DATE,
             ticker TEXT,
+            option_type TEXT,
+            expiry_date DATE,
+            strike FLOAT,
             metadata JSON
           )
         """
@@ -78,6 +81,7 @@ def add_transaction():
         notes = data["notes"] if "notes" in data else ""
         strike = 0
         expiry_date_str = "2023-01-01"
+        expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
         option_type = ""
         if entity_type == OPTION_ENTITY_TYPE_STRING:
             required_option_fields = [
@@ -107,11 +111,16 @@ def add_transaction():
             strike = data["strike"]
             expiry_date_str = data["expiry_date"]
             option_type = data["option_type"]
+            # Validate expiry date format
+            try:
+                expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
+            except ValueError:
+                return (
+                    jsonify({"error": 'Invalid date format, "YYYY-MM-DD" is required'}),
+                    400,
+                )
         metadata = {
             "notes": notes,
-            "strike": strike,
-            "expiry_date": expiry_date_str,
-            "option_type": option_type,
         }
 
         # Validate date format
@@ -126,15 +135,18 @@ def add_transaction():
         # Insert data into the table using parameterized query
         db = get_db()
         db.execute(
-            "INSERT INTO transactions (portfolio_id, txn_type, qty, price, date, ticker, entity_type, metadata ) VALUES (?,?,?,?,?,?,?,?)",
+            "INSERT INTO transactions (portfolio_id, txn_type, qty, price, date, ticker, entity_type,option_type,expiry_date,strike, metadata ) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
             (
                 portfolio_id,
                 txn_type,
                 qty,
                 price,
-                date_str,
+                date,
                 ticker,
                 entity_type,
+                option_type,
+                expiry_date,
+                strike,
                 json.dumps(metadata),
             ),
         )
