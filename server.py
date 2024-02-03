@@ -1,13 +1,11 @@
 from datetime import datetime
-import json
 from flask import Flask, request, jsonify, g
 import sqlite3
-
-DATABASE = "sqlDb.db"
-OPTION_ENTITY_TYPE_STRING = "option"
+from src.add_transaction import add_transaction
+from src.utils import DATABASE_FILE_NAME
 
 app = Flask(__name__)
-app.config["DATABASE"] = DATABASE
+app.config["DATABASE"] = DATABASE_FILE_NAME
 
 
 def get_db():
@@ -46,115 +44,10 @@ def create_tables():
 create_tables()
 
 
-# Used to add a stock or cash transaction to the DB
+# Used to add any transaction to the DB
 @app.route("/addTransaction", methods=["POST"])
-def add_transaction():
-    try:
-        data = request.get_json()
-        required_fields = [
-            ("portfolio_id", str),
-            ("txn_type", str),
-            ("qty", (int, float)),
-            ("price", float),
-            ("date", str),
-            ("ticker", str),
-            ("entity_type", str),
-        ]
-        for field, field_type in required_fields:
-            if field not in data:
-                return jsonify({"error": f'Missing "{field}" in the input data'}), 400
-            if not isinstance(data[field], field_type):
-                return (
-                    jsonify(
-                        {"error": f'Field "{field}" should be of type "{field_type}"'}
-                    ),
-                    400,
-                )
-
-        portfolio_id = data["portfolio_id"]
-        txn_type = data["txn_type"]
-        qty = data["qty"]
-        price = data["price"]
-        date_str = data["date"]
-        ticker = data["ticker"]
-        entity_type = data["entity_type"]
-        notes = data["notes"] if "notes" in data else ""
-        strike = 0
-        expiry_date_str = "2023-01-01"
-        expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
-        option_type = ""
-        if entity_type == OPTION_ENTITY_TYPE_STRING:
-            required_option_fields = [
-                ("strike", float),
-                ("expiry_date", str),
-                ("option_type", str),
-            ]
-            for field, field_type in required_option_fields:
-                if field not in data:
-                    return (
-                        jsonify(
-                            {
-                                "error": f'Missing "{field}" in the input data for options transaction'
-                            }
-                        ),
-                        400,
-                    )
-                if not isinstance(data[field], field_type):
-                    return (
-                        jsonify(
-                            {
-                                "error": f'Field "{field}" should be of type "{field_type}"'
-                            }
-                        ),
-                        400,
-                    )
-            strike = data["strike"]
-            expiry_date_str = data["expiry_date"]
-            option_type = data["option_type"]
-            # Validate expiry date format
-            try:
-                expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
-            except ValueError:
-                return (
-                    jsonify({"error": 'Invalid date format, "YYYY-MM-DD" is required'}),
-                    400,
-                )
-        metadata = {
-            "notes": notes,
-        }
-
-        # Validate date format
-        try:
-            date = datetime.strptime(date_str, "%Y-%m-%d").date()
-        except ValueError:
-            return (
-                jsonify({"error": 'Invalid date format, "YYYY-MM-DD" is required'}),
-                400,
-            )
-
-        # Insert data into the table using parameterized query
-        db = get_db()
-        db.execute(
-            "INSERT INTO transactions (portfolio_id, txn_type, qty, price, date, ticker, entity_type,option_type,expiry_date,strike, metadata ) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (
-                portfolio_id,
-                txn_type,
-                qty,
-                price,
-                date,
-                ticker,
-                entity_type,
-                option_type,
-                expiry_date,
-                strike,
-                json.dumps(metadata),
-            ),
-        )
-        db.commit()
-        return jsonify({"message": "Data inserted successfully"}), 201
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+def add_transaction_route():
+    return add_transaction(request, get_db())
 
 
 @app.route("/getTransactionsByPortfolioDate", methods=["GET"])
