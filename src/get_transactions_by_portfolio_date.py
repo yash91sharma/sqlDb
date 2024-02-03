@@ -45,7 +45,7 @@ def get_transactions_by_portfolio_date(request, db):
             return make_response(
                 jsonify(
                     {
-                        "message": f'Data for portfolio "{portfolio_id}" for data "{date}" not found'
+                        "message": f'Oops, transactions for portfolio "{portfolio_id}" for date "{date}" not found'
                     }
                 ),
                 404,
