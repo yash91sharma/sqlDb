@@ -9,6 +9,7 @@ from src.utils import (
     DEFAULT_DATE_STR,
     ADD_SNAPSHOT_QUERY,
     validate_fields,
+    convert_str_to_date,
 )
 
 
@@ -22,11 +23,9 @@ def add_snapshot(request, db):
             return fields_validation_error
         portfolio_id = data["portfolio_id"]
         snapshot_date_str = data["snapshot_date"]
-        snapshot_date = DEFAULT_DATE_STR
         value = data["portfolio_value"]
-        try:
-            snapshot_date = datetime.strptime(snapshot_date_str, "%Y-%m-%d").date()
-        except ValueError:
+        snapshot_date = convert_str_to_date(snapshot_date_str)
+        if snapshot_date is None:
             return generate_missing_field_type_api_error("snapshot_date", "YYYY-MM-DD")
 
         if "assets" not in data:
@@ -40,10 +39,8 @@ def add_snapshot(request, db):
             if asset_fields_validation_error:
                 return asset_fields_validation_error
             expiry_date_str = asset["expiry_date"]
-            expiry_date = DEFAULT_DATE_STR
-            try:
-                expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
-            except ValueError:
+            expiry_date = convert_str_to_date(expiry_date_str)
+            if expiry_date is None:
                 return generate_missing_field_type_api_error(
                     f'expiry_date_str for "{asset["ticker"]}"', "YYYY-MM-DD"
                 )
