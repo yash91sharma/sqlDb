@@ -1,7 +1,7 @@
 from flask import jsonify
 from datetime import datetime
 
-DATABASE_FILE_NAME = "sqlDb.db"
+DATABASE_FILE_NAME = "data/sqlDb.db"
 OPTION_ENTITY_TYPE_STRING = "option"
 ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
