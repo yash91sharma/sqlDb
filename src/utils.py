@@ -126,3 +126,14 @@ def convert_str_to_date(date_str):
         return datetime.strptime(date_str, "%Y-%m-%d").date()
     except ValueError:
         return None
+
+
+CREATE_SUMMARY_TABLE_QUERY = """
+          CREATE TABLE IF NOT EXISTS summary (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            portfolio_id TEXT,
+            date DATE,
+            portfolio_value FLOAT,
+            assets JSON
+          )
+        """
