@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, g
+from flask import Flask, request, g
 import sqlite3
 from src.add_transaction import add_transaction
 from src.get_transactions_by_portfolio_date import get_transactions_by_portfolio_date
