@@ -52,7 +52,7 @@ def get_snapshot_by_portfolio(request, db):
             response = [
                 {
                     "columns": columns,
-                    "data": [dict(zip(columns, row)) for row in rows],
+                    "rows": [dict(zip(columns, row)) for row in rows],
                 }
             ]
             return make_response(jsonify(response), 200)
