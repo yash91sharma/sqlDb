@@ -49,12 +49,10 @@ def get_snapshot_by_portfolio(request, db):
         rows = cursor.fetchall()
         if rows:
             columns = [desc[0] for desc in cursor.description]
-            response = [
-                {
-                    "columns": columns,
-                    "rows": [dict(zip(columns, row)) for row in rows],
-                }
-            ]
+            response = {
+                "columns": columns,
+                "rows": [dict(zip(columns, row)) for row in rows],
+            }
             return make_response(jsonify(response), 200)
         return make_response(
             jsonify(
