@@ -109,7 +109,13 @@ GET_SNAPSHOT_BY_PORTFOLIO_QUERY = (
     "SELECT * FROM snapshots WHERE portfolio_id = ? ORDER BY snapshot_date DESC LIMIT 1"
 )
 
-GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY = "SELECT * FROM snapshots WHERE portfolio_id = ? and snapshot_date = ? ORDER BY snapshot_date DESC LIMIT 1"
+GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY = """
+    SELECT *
+    FROM snapshots
+    WHERE
+        portfolio_id = ? 
+        and snapshot_date BETWEEN ? and ?
+"""
 
 
 def validate_fields(data, field_with_types):
