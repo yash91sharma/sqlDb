@@ -19,7 +19,8 @@ ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES = [
 DEFAULT_DATE_STR = "2021-11-23"
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE = [
     ("portfolio_id", str),
-    ("date", str),
+    ("start_date", str),
+    ("end_date", str),
 ]
 
 
@@ -48,7 +49,7 @@ ADD_TRANSACTION_QUERY = """
 """
 
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = (
-    "SELECT * FROM transactions WHERE portfolio_id = ? AND date = ?"
+    """SELECT * FROM transactions WHERE portfolio_id = ? AND date BETWEEN ? AND ?"""
 )
 
 CREATE_TRANSACTION_TABLE_QUERY = """
