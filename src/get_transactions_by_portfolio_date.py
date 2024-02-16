@@ -41,9 +41,7 @@ def get_transactions_by_portfolio_date(request, db):
             rows = cursor.fetchall()
 
         columns = [desc[0] for desc in cursor.description]
-        result = [
-            {"columns": columns, "rows": [dict(zip(columns, row)) for row in rows]}
-        ]
+        result = {"columns": columns, "rows": [dict(zip(columns, row)) for row in rows]}
         return make_response(jsonify(result), 200)
 
     except Exception as e:
