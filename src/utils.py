@@ -49,7 +49,7 @@ ADD_TRANSACTION_QUERY = """
 """
 
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = (
-    """SELECT * FROM transactions WHERE portfolio_id = ? AND date BETWEEN ? AND ?"""
+    """SELECT * FROM transactions WHERE portfolio_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC"""
 )
 
 CREATE_TRANSACTION_TABLE_QUERY = """
