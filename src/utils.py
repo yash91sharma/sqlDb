@@ -7,7 +7,7 @@ ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
     ("txn_type", str),
     ("qty", (int, float)),
-    ("price", float),
+    ("price", (int, float)),
     ("date", str),
     ("ticker", str),
     ("entity_type", str),
