@@ -51,6 +51,10 @@ def add_transaction(request, db):
             raise Exception(entity_type_validation_error)
         if txn_type == "sell" and qty > 0:
             raise Exception("Sell transactions should have negative quantity.")
+        if price < 0:
+            raise Exception("Price can not be negative.")
+        if entity_type == "cash" and ticker != "$":
+            raise Exception("Case transaction should have a '$' ticker.")
 
         # defaults for option columns, in case transaction is non-option
         strike = 0
