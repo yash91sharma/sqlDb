@@ -2,7 +2,7 @@ from flask import jsonify
 from datetime import datetime
 
 DATABASE_FILE_NAME = "data/sqlDb.db"
-OPTION_ENTITY_TYPE_STRING = "option"
+OPTION_ENTITY_TYPE_STRING = ["option-call", "option-put"]
 ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
     ("txn_type", str),
@@ -48,9 +48,7 @@ ADD_TRANSACTION_QUERY = """
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
-GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = (
-    """SELECT * FROM transactions WHERE portfolio_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC, id ASC"""
-)
+GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = """SELECT * FROM transactions WHERE portfolio_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC, id ASC"""
 
 CREATE_TRANSACTION_TABLE_QUERY = """
           CREATE TABLE IF NOT EXISTS transactions (

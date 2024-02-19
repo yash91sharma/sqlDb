@@ -36,6 +36,9 @@ def add_transaction(request, db):
             "notes": notes,
         }
 
+        if txn_type == "sell" and qty > 0:
+            raise Exception("Sell transactions should have negative quantity.")
+
         # defaults for option columns, in case transaction is non-option
         strike = 0
         expiry_date_str = DEFAULT_DATE_STR
@@ -47,7 +50,7 @@ def add_transaction(request, db):
             return generate_missing_field_type_api_error("date", "YYYY-MM-DD")
 
         # option transaction field check
-        if entity_type == OPTION_ENTITY_TYPE_STRING:
+        if entity_type in OPTION_ENTITY_TYPE_STRING:
             option_fields_validation_error = validate_fields(
                 data, ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES
             )
