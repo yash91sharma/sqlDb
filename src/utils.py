@@ -25,14 +25,11 @@ GET_TRANSACTIONS_BY_PORTFOLIO_DATE_REQUIRED_FIELDS_AND_TYPE = [
 
 
 def generate_missing_field_api_error(field_name):
-    return jsonify({"error": f'Missing "{field_name}" in the input data'}), 400
+    return f'Missing "{field_name}" in the input data'
 
 
 def generate_missing_field_type_api_error(field_name, field_type):
-    return (
-        jsonify({"error": f'Field "{field_name}" should be of type "{field_type}"'}),
-        400,
-    )
+    return f'Field "{field_name}" should be of type "{field_type}"'
 
 
 ADD_TRANSACTION_QUERY = """
@@ -131,3 +128,18 @@ def convert_str_to_date(date_str):
         return datetime.strptime(date_str, "%Y-%m-%d").date()
     except ValueError:
         return None
+
+
+TRANSACTION_TXN_TYPE_VALUES = ["sell", "buy", "deposit", "withdraw"]
+
+TRANSACTION_ENTITY_TYPE_VALUES = ["cash", "stock", "option-put", "option-call"]
+
+
+def generate_invalid_field_api_error(field_name, field_value):
+    return f'Transaction field "{field_name}" cannot be "{field_value}".'
+
+
+def validate_field_value(field_value, field_name, possible_values):
+    if field_value not in possible_values:
+        return generate_invalid_field_api_error(field_name, field_value)
+    return None

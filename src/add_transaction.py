@@ -10,6 +10,9 @@ from src.utils import (
     generate_missing_field_type_api_error,
     validate_fields,
     convert_str_to_date,
+    TRANSACTION_TXN_TYPE_VALUES,
+    TRANSACTION_ENTITY_TYPE_VALUES,
+    validate_field_value,
 )
 
 
@@ -22,7 +25,7 @@ def add_transaction(request, db):
             data, ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES
         )
         if fields_validation_error:
-            return fields_validation_error
+            raise Exception(fields_validation_error)
 
         portfolio_id = data["portfolio_id"]
         txn_type = data["txn_type"]
@@ -36,6 +39,16 @@ def add_transaction(request, db):
             "notes": notes,
         }
 
+        txn_type_validation_error = validate_field_value(
+            txn_type, "txn_type", TRANSACTION_TXN_TYPE_VALUES
+        )
+        if txn_type_validation_error is not None:
+            raise Exception(txn_type_validation_error)
+        entity_type_validation_error = validate_field_value(
+            entity_type, "entity_type", TRANSACTION_ENTITY_TYPE_VALUES
+        )
+        if entity_type_validation_error is not None:
+            raise Exception(entity_type_validation_error)
         if txn_type == "sell" and qty > 0:
             raise Exception("Sell transactions should have negative quantity.")
 
@@ -47,7 +60,7 @@ def add_transaction(request, db):
         # Validate date format
         date = convert_str_to_date(date_str)
         if date is None:
-            return generate_missing_field_type_api_error("date", "YYYY-MM-DD")
+            raise Exception(generate_missing_field_type_api_error("date", "YYYY-MM-DD"))
 
         # option transaction field check
         if entity_type in OPTION_ENTITY_TYPE_STRING:
@@ -55,14 +68,14 @@ def add_transaction(request, db):
                 data, ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES
             )
             if option_fields_validation_error:
-                return option_fields_validation_error
+                raise Exception(option_fields_validation_error)
             strike = data["strike"]
             expiry_date_str = data["expiry_date"]
             # Validate expiry date format
             expiry_date = convert_str_to_date(expiry_date_str)
             if expiry_date is None:
-                return generate_missing_field_type_api_error(
-                    "expiry_date", "YYYY-MM-DD"
+                raise Exception(
+                    generate_missing_field_type_api_error("expiry_date", "YYYY-MM-DD")
                 )
 
         # Insert data into the table using parameterized query
@@ -85,6 +98,8 @@ def add_transaction(request, db):
         return make_response(
             jsonify({"message": "Transaction inserted successfully"}), 201
         )
-
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return (
+            jsonify({"error": "Error occured while adding transaction: " + str(e)}),
+            500,
+        )
