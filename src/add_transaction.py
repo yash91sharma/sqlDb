@@ -38,7 +38,6 @@ def add_transaction(request, db):
 
         # defaults for option columns, in case transaction is non-option
         strike = 0
-        option_type = ""
         expiry_date_str = DEFAULT_DATE_STR
         expiry_date = datetime.strptime(expiry_date_str, "%Y-%m-%d").date()
 
