@@ -6,10 +6,11 @@ from src.utils import (
     ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES,
     generate_missing_field_api_error,
     generate_missing_field_type_api_error,
-    DEFAULT_DATE_STR,
     ADD_SNAPSHOT_QUERY,
     validate_fields,
     convert_str_to_date,
+    ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES,
+    ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES,
 )
 
 
@@ -31,29 +32,41 @@ def add_snapshot(request, db):
         if "assets" not in data:
             return generate_missing_field_api_error("assets")
 
-        assets = []
-        for asset in data["assets"]:
+        assets = {"cash": 0, "stock": {}, "option": []}
+        request_assets = data["assets"]
+        if len(request_assets) > 0:
             asset_fields_validation_error = validate_fields(
-                asset, ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES
+                request_assets, ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES
             )
             if asset_fields_validation_error:
                 return asset_fields_validation_error
-            expiry_date_str = asset["expiry_date"]
-            expiry_date = convert_str_to_date(expiry_date_str)
-            if expiry_date is None:
-                return generate_missing_field_type_api_error(
-                    f'expiry_date_str for "{asset["ticker"]}"', "YYYY-MM-DD"
+            # should follow 'AAPL': [value, qty, cost_basis]
+            for ticker, ticker_values in request_assets["stock"].items():
+                if not isinstance(ticker_values, list) or len(ticker_values) != 3:
+                    return generate_missing_field_type_api_error(
+                        f"values for stock key {ticker}", "list of 3 items"
+                    )
+                if not all(isinstance(i, (int, float)) for i in ticker_values):
+                    return generate_missing_field_type_api_error(
+                        f"values for stock key {ticker}", "int or float"
+                    )
+            for option in request_assets["option"]:
+                print("checking")
+                option_validation_field_error = validate_fields(
+                    option,
+                    ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES
+                    + ADD_TRANSACTION_REQUIRED_OPTION_FIELDS_AND_TYPES,
                 )
-            assets.append(
-                {
-                    "entity_type": asset["entity_type"],
-                    "ticker": asset["ticker"],
-                    "value": asset["value"],
-                    "qty": asset["qty"],
-                    "cost_basis": asset["cost_basis"],
-                    "expiry_date": expiry_date,
-                }
-            )
+                if option_validation_field_error is not None:
+                    return option_validation_field_error
+
+            # validation is complete, now fetch values from assets
+            assets["cash"] = request_assets.get("cash")
+            assets["stock"] = request_assets.get("stock")
+            assets["option"] = request_assets.get("option")
+        print(assets)
+
+        # TODO: add a check to see if this data already exists in the DB.
         db.execute(
             ADD_SNAPSHOT_QUERY,
             (

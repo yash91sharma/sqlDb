@@ -1,4 +1,3 @@
-from flask import jsonify
 from datetime import datetime
 
 DATABASE_FILE_NAME = "data/sqlDb.db"
@@ -80,12 +79,9 @@ ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES = [
 ]
 
 ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
-    ("entity_type", str),
-    ("ticker", str),
-    ("value", float),
-    ("qty", float),
-    ("cost_basis", float),
-    ("expiry_date", str),
+    ("cash", (float, int)),
+    ("stock", dict),
+    ("option", list),
 ]
 
 ADD_SNAPSHOT_QUERY = """
