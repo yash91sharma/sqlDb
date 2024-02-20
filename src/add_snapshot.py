@@ -64,7 +64,6 @@ def add_snapshot(request, db):
             assets["cash"] = request_assets.get("cash")
             assets["stock"] = request_assets.get("stock")
             assets["option"] = request_assets.get("option")
-        print(assets)
 
         # TODO: add a check to see if this data already exists in the DB.
         db.execute(
