@@ -51,7 +51,6 @@ def add_snapshot(request, db):
                         f"values for stock key {ticker}", "int or float"
                     )
             for option in request_assets["option"]:
-                print("checking")
                 option_validation_field_error = validate_fields(
                     option,
                     ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES
@@ -59,6 +58,11 @@ def add_snapshot(request, db):
                 )
                 if option_validation_field_error is not None:
                     return option_validation_field_error
+            for _, premium_value in request_assets["premium"].items():
+                if not isinstance(premium_value, (int, float)):
+                    return generate_missing_field_type_api_error(
+                        "premium values", "int or float"
+                    )
 
             # validation is complete, now fetch values from assets
             assets["cash"] = request_assets.get("cash")

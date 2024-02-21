@@ -82,6 +82,7 @@ ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
     ("cash", (float, int)),
     ("stock", dict),
     ("option", list),
+    ("premium", dict),
 ]
 
 ADD_SNAPSHOT_QUERY = """
