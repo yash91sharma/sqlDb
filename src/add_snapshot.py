@@ -32,7 +32,7 @@ def add_snapshot(request, db):
         if "assets" not in data:
             return generate_missing_field_api_error("assets")
 
-        assets = {"cash": 0, "stock": {}, "option": []}
+        assets = {"cash": 0, "stock": {}, "option": [], "premium":{}}
         request_assets = data["assets"]
         if len(request_assets) > 0:
             asset_fields_validation_error = validate_fields(
@@ -68,6 +68,7 @@ def add_snapshot(request, db):
             assets["cash"] = request_assets.get("cash")
             assets["stock"] = request_assets.get("stock")
             assets["option"] = request_assets.get("option")
+            assets["premium"] = request_assets.get("premium")
 
         # TODO: add a check to see if this data already exists in the DB.
         db.execute(
