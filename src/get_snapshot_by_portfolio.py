@@ -7,16 +7,20 @@ from src.utils import (
     validate_fields,
     convert_str_to_date,
 )
+import logging
+
+logger = logging.getLogger()
 
 
 def get_snapshot_by_portfolio(request, db):
     try:
         data = request.json
+        logger.info(f'Get snapshot by portfolio request received with fields: "{data}"')
         field_validation_error = validate_fields(
             data, GET_SNAPSHOT_BY_PORTFOLIO_REQUIRED_FIELDS_AND_TYPES
         )
         if field_validation_error:
-            return field_validation_error
+            raise Exception(field_validation_error)
         portfolio_id = data["portfolio_id"]
         start_date = None
         end_date = None
@@ -26,10 +30,14 @@ def get_snapshot_by_portfolio(request, db):
         if "start_date" in data and "end_date" in data:
             start_date = convert_str_to_date(data["start_date"])
             if start_date is None:
-                return generate_missing_field_type_api_error("start_date", "YYYY-MM-DD")
+                raise Exception(
+                    generate_missing_field_type_api_error("start_date", "YYYY-MM-DD")
+                )
             end_date = convert_str_to_date(data["end_date"])
             if end_date is None:
-                return generate_missing_field_type_api_error("end_date", "YYYY-MM-DD")
+                raise Exception(
+                    generate_missing_field_type_api_error("end_date", "YYYY-MM-DD")
+                )
 
         # Run the query based on input params.
         with db:
@@ -53,7 +61,9 @@ def get_snapshot_by_portfolio(request, db):
                 "columns": columns,
                 "rows": [dict(zip(columns, row)) for row in rows],
             }
+            logger.info(f'Success getting snapshot for portfolio "{portfolio_id}"')
             return make_response(jsonify(response), 200)
+        logger.info(f'No snapshot found for portfolio "{portfolio_id}"')
         return make_response(
             jsonify(
                 {"message": f'Oops, snapshot for portfolio "{portfolio_id}" not found'}
@@ -62,4 +72,5 @@ def get_snapshot_by_portfolio(request, db):
         )
 
     except Exception as e:
+        logger.error("Error occured while getting snapshot portfolio:", e)
         return jsonify({"error": str(e)}), 500

@@ -14,12 +14,15 @@ from src.utils import (
     TRANSACTION_ENTITY_TYPE_VALUES,
     validate_field_value,
 )
+import logging
+
+logger = logging.getLogger()
 
 
 def add_transaction(request, db):
     try:
         data = request.json
-
+        logger.info(f"Add transaction request received for with fields: {data}")
         # general transaction field checks
         fields_validation_error = validate_fields(
             data, ADD_TRANSACTION_REQUIRED_FIELDS_AND_TYPES
@@ -96,11 +99,13 @@ def add_transaction(request, db):
             ),
         )
         db.commit()
+        logger.info(f'Success adding transaction for portfolio "{portfolio_id}"')
         return make_response(
             jsonify({"message": "Transaction inserted successfully"}), 201
         )
     except Exception as e:
-        return (
+        logger.error("Error occured while adding transaction: ", e)
+        return make_response(
             jsonify({"error": "Error occured while adding transaction: " + str(e)}),
             500,
         )
