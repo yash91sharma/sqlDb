@@ -50,5 +50,5 @@ def get_snapshot_by_portfolio_route():
 
 if __name__ == "__main__":
     # dev server
-    app.run(debug=True, port=12342)
-    # serve(app, host="0.0.0.0", port=12342)
+    # app.run(debug=True, port=12342)
+    serve(app, host="0.0.0.0", port=12342)
