@@ -73,7 +73,7 @@ CREATE_SNAPSHOT_TABLE_QUERY = """
 ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
     ("snapshot_date", str),
-    ("portfolio_value", (int,float)),
+    ("portfolio_value", (int, float)),
 ]
 
 ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
@@ -109,7 +109,7 @@ GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY = """
 """
 
 
-def validate_fields(data:dict, field_with_types:list):
+def validate_fields(data: dict, field_with_types: list):
     for field_name, field_type in field_with_types:
         if field_name not in data:
             return generate_missing_field_api_error(field_name)
