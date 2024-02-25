@@ -39,9 +39,8 @@ ADD_TRANSACTION_QUERY = """
         date, ticker,
         entity_type,
         expiry_date,
-        strike,
-        metadata
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        strike
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 GET_TRANSACTIONS_BY_PORTFOLIO_DATE_QUERY = """SELECT * FROM transactions WHERE portfolio_id = ? AND date BETWEEN ? AND ? ORDER BY date ASC, id ASC"""
@@ -57,8 +56,7 @@ CREATE_TRANSACTION_TABLE_QUERY = """
             date DATE,
             ticker TEXT,
             expiry_date DATE,
-            strike FLOAT,
-            metadata JSON
+            strike FLOAT
           )
         """
 
@@ -75,7 +73,7 @@ CREATE_SNAPSHOT_TABLE_QUERY = """
 ADD_SNAPSHOT_REQUIRED_FIELDS_AND_TYPES = [
     ("portfolio_id", str),
     ("snapshot_date", str),
-    ("portfolio_value", float),
+    ("portfolio_value", (int,float)),
 ]
 
 ADD_SNAPSHOT_REQUIRED_ASSETS_FIELDS_AND_TYPES = [
@@ -111,7 +109,7 @@ GET_SNAPSHOT_BY_PORTFOLIO_WITH_DATE_QUERY = """
 """
 
 
-def validate_fields(data, field_with_types):
+def validate_fields(data:dict, field_with_types:list):
     for field_name, field_type in field_with_types:
         if field_name not in data:
             return generate_missing_field_api_error(field_name)

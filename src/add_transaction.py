@@ -33,11 +33,7 @@ def add_transaction(request, db):
         price = data["price"]
         date_str = data["date"]
         ticker = data["ticker"]
-        notes = data["notes"] if "notes" in data else ""
         entity_type = data["entity_type"]
-        metadata = {
-            "notes": notes,
-        }
 
         txn_type_validation_error = validate_field_value(
             txn_type, "txn_type", TRANSACTION_TXN_TYPE_VALUES
@@ -97,7 +93,6 @@ def add_transaction(request, db):
                 entity_type,
                 expiry_date,
                 strike,
-                json.dumps(metadata),
             ),
         )
         db.commit()
