@@ -16,4 +16,4 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . .
 
-CMD python server.py
+CMD python sql_db_server.py
