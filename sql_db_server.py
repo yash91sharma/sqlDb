@@ -10,7 +10,13 @@ from src.create_tables import (
 from src.add_snapshot import add_snapshot
 from src.get_snapshot_by_portfolio import get_snapshot_by_portfolio
 from waitress import serve
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S %p %Z",
+)
 app = Flask(__name__)
 app.config["DATABASE"] = DATABASE_FILE_NAME
 
