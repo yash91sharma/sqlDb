@@ -1,5 +1,6 @@
 # Ignore all files with a specific extension
 *.db
+.DS_Store
 
 # Ignore all pycache directories
 __pycache__/
