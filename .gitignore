@@ -4,3 +4,4 @@
 
 # Ignore all pycache directories
 __pycache__/
+certs/
