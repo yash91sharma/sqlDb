@@ -9,7 +9,6 @@ from src.create_tables import (
 )
 from src.add_snapshot import add_snapshot
 from src.get_snapshot_by_portfolio import get_snapshot_by_portfolio
-from waitress import serve
 import logging
 
 logging.basicConfig(
@@ -56,5 +55,4 @@ def get_snapshot_by_portfolio_route():
 
 if __name__ == "__main__":
     # dev server
-    # app.run(debug=True, port=12342)
-    serve(app, host="0.0.0.0", port=12342)
+    app.run(debug=True,host="0.0.0.0", port=12342)

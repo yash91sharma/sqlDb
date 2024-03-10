@@ -16,4 +16,4 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . .
 
-CMD python sql_db_server.py
+CMD gunicorn -b 0.0.0.0:12342 wsgi:app
