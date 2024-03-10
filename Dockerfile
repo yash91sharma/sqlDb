@@ -16,4 +16,4 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY . .
 
-CMD gunicorn -b 0.0.0.0:12342 wsgi:app
+CMD gunicorn --certfile certs/cert.pem --keyfile certs/privkey.pem --bind 0.0.0.0:12342 wsgi:app
