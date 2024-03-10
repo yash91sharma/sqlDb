@@ -11,9 +11,3 @@ Without SSL:
 ```
 gunicorn -b 0.0.0.0:12342 wsgi:app
 ```
-
-With SSL:
-
-```
-gunicorn --certfile certs/cert.pem --keyfile certs/privkey.pem --bind 0.0.0.0:12342 wsgi:app
-```
